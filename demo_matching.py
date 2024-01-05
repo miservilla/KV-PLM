@@ -21,6 +21,10 @@ class BigModel(nn.Module):
         pooled_output = self.main_model(tok, token_type_ids=typ, attention_mask=att)['pooler_output']
         logits = self.dropout(pooled_output)
         return logits
+    
+    def get_emb(self, tokens, token_type_ids, attention_mask):
+        pooled_output = self.main_model(tokens, token_type_ids, attention_mask)['pooler_output']
+        return pooled_output
 
 bert_model0 = BertForPreTraining.from_pretrained('allenai/scibert_scivocab_uncased')
 model = BigModel(bert_model0.bert)
@@ -31,12 +35,12 @@ else:
     model.load_state_dict(torch.load('save_model/ckpt_ret01.pt', map_location=torch.device('cpu') ))
 model.eval()
 while True:
-    SM = input("SMILES string: ")
+    # SM = input("SMILES string: ")
     txt = input("description: ")
-    inp_SM = tokenizer.encode(SM)#[i+30700 for i in tokenizer.encode(SM)]
-    inp_SM = inp_SM[:min(128, len(inp_SM))]
-    inp_SM = torch.from_numpy(np.array(inp_SM)).long().unsqueeze(0)
-    att_SM = torch.ones(inp_SM.shape).long()
+    # inp_SM = tokenizer.encode(SM)#[i+30700 for i in tokenizer.encode(SM)]
+    # inp_SM = inp_SM[:min(128, len(inp_SM))]
+    # inp_SM = torch.from_numpy(np.array(inp_SM)).long().unsqueeze(0)
+    # att_SM = torch.ones(inp_SM.shape).long()
 
     inp_txt = tokenizer.encode(txt)
     inp_txt = inp_txt[:min(128, len(inp_txt))]
@@ -44,15 +48,21 @@ while True:
     att_txt = torch.ones(inp_txt.shape).long()
 
     if if_cuda:
-        inp_SM = inp_SM.cuda()
-        att_SM = att_SM.cuda()
+        # inp_SM = inp_SM.cuda()
+        # att_SM = att_SM.cuda()
         inp_txt = inp_txt.cuda()
         att_txt = att_txt.cuda()
 
+    # with torch.no_grad():
+    #     logits_des = model(inp_txt, att_txt, if_cuda)
+    #     # logits_smi = model(inp_SM, att_SM, if_cuda)
+    #     # score = torch.cosine_similarity(logits_des, logits_smi, dim=-1)
+    #     # print('Matching score = ', score[0].item())
+    #     print(logits_des)
+    #     print('\n')
+
     with torch.no_grad():
-        logits_des = model(inp_txt, att_txt, if_cuda)
-        logits_smi = model(inp_SM, att_SM, if_cuda)
-        score = torch.cosine_similarity(logits_des, logits_smi, dim=-1)
-        print('Matching score = ', score[0].item())
+        pooled_output = model.get_emb(inp_txt, torch.zeros(inp_txt.shape).long().cuda() if if_cuda else torch.zeros(inp_txt.shape).long(), att_txt)
+        print(pooled_output)
         print('\n')
 
