@@ -13,7 +13,8 @@ import re
 import numpy as np
 from rdkit import Chem
 
-import pkg_resources
+# import pkg_resources
+import importlib_resources as pkg_resources
 
 from typing import List
 
@@ -22,14 +23,26 @@ from transformers import BertTokenizer
 # Cell
 SMI_REGEX_PATTERN = r"(\[[^\]]+]|Br?|Cl?|N|O|S|P|F|I|b|c|n|o|s|p|\(|\)|\.|=|#|-|\+|\\|\/|:|~|@|\?|>>?|\*|\$|\%[0-9]{2}|[0-9])"
 
+# def get_default_tokenizer():
+#     default_vocab_path = (
+#         pkg_resources.resource_filename(
+#                     "rxnfp",
+#                     "models/transformers/bert_ft_10k_25s/vocab.txt"
+#                 )
+#     )
+#     return SmilesTokenizer(default_vocab_path)
+
+
+
 def get_default_tokenizer():
-    default_vocab_path = (
-        pkg_resources.resource_filename(
-                    "rxnfp",
-                    "models/transformers/bert_ft_10k_25s/vocab.txt"
-                )
-    )
-    return SmilesTokenizer(default_vocab_path)
+    # Create a reference to the resource
+    ref = pkg_resources.files('rxnfp') / 'models/transformers/bert_ft_10k_25s/vocab.txt'
+
+    # Use the resource as a file
+    with pkg_resources.as_file(ref) as path:
+        # Initialize the tokenizer with the file path
+        return SmilesTokenizer(str(path))
+
 
 
 
