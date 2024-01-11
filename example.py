@@ -5,7 +5,7 @@ from smtokenization import SmilesTokenizer, get_default_tokenizer, convert_react
 tokenizer = get_default_tokenizer()
 
 # Load and process your SMILES data
-with open("/home/michaelservilla/KV-PLM/data/smiles.txt", "r") as file:
+with open("data/smiles.txt", "r") as file:
     for line in file:
         smiles = line.strip()
         tokenized_smiles = tokenizer.tokenize(smiles)
