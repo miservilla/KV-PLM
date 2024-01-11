@@ -1,7 +1,7 @@
 
-f = open('MoleculeNet/text_sider.txt', 'r')
+f = open('MoleculeNet/text_tox21.txt', 'r')
 lines = f.readlines()
-fw = open('smiles_sider.txt', 'w')
+fw = open('smiles_tox21.txt', 'w')
 
 label = []
 

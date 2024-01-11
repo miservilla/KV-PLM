@@ -1,4 +1,8 @@
-dataset='chemprot'
+# dataset='chemprot'
+# task='HIV'
+# model='KV-PLM*'
+
+dataset='bc5cdr'
 task='HIV'
 model='KV-PLM*'
 
