@@ -1,5 +1,5 @@
 
-f = open('../text_sider.txt', 'r')
+f = open('MoleculeNet/text_sider.txt', 'r')
 lines = f.readlines()
 fw = open('smiles_sider.txt', 'w')
 
