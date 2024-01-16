@@ -65,4 +65,6 @@ while True:
         pooled_output = model.get_emb(inp_txt, torch.zeros(inp_txt.shape).long().cuda() if if_cuda else torch.zeros(inp_txt.shape).long(), att_txt)
         print(pooled_output)
         print('\n')
+        print(pooled_output.shape)
+        
 
