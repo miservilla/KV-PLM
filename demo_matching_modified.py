@@ -3,6 +3,7 @@ import sys
 import torch
 import torch.nn as nn
 import numpy as np
+from transformers import BertForSequenceClassification, BertConfig
 
 if_cuda = True
 
@@ -26,32 +27,49 @@ class BigModel(nn.Module):
         pooled_output = self.main_model(tokens, token_type_ids, attention_mask)['pooler_output']
         return pooled_output
 
-bert_model0 = BertForPreTraining.from_pretrained('allenai/scibert_scivocab_uncased')
-model = BigModel(bert_model0.bert)
-if if_cuda:
-    model.load_state_dict(torch.load('save_model/ckpt_ret01.pt'))
-    model = model.cuda()
+#bert_model0 = BertForPreTraining.from_pretrained('allenai/scibert_scivocab_uncased')
+bert_model = BertForSequenceClassification.from_pretrained('allenai/scibert_scivocab_uncased')
+bert_model.classifier = nn.Linear(768,13)
+
+pt = torch.load('save_model/ckpt_KV_1.pt')
+if 'module.ptmodel.bert.embeddings.word_embeddings.weight' in pt:
+    pretrained_dict = {k[20:]: v for k, v in pt.items()}
+elif 'bert.embeddings.word_embeddings.weight' in pt:
+    pretrained_dict = {k[5:]: v for k, v in pt.items()}
 else:
-    model.load_state_dict(torch.load('save_model/ckpt_ret01.pt', map_location=torch.device('cpu') ))
+    pretrained_dict = {k[12:]: v for k, v in pt.items()}
+
+bert_model.bert.load_state_dict(pretrained_dict, strict=False)
+
+model = BigModel(bert_model)
+
+if_cuda = False
+if if_cuda:
+    # model.load_state_dict(torch.load('save_model/ckpt_KV.pt'))
+    # model = model.cuda()
+    model = model.cuda()
+
+
+print("Finished loading ckpt_kv")
 model.eval()
 while True:
     # SM = input("SMILES string: ")
-    txt = input("description: ")
+#    txt = input("description: ")
     # inp_SM = tokenizer.encode(SM)#[i+30700 for i in tokenizer.encode(SM)]
     # inp_SM = inp_SM[:min(128, len(inp_SM))]
     # inp_SM = torch.from_numpy(np.array(inp_SM)).long().unsqueeze(0)
     # att_SM = torch.ones(inp_SM.shape).long()
 
-    inp_txt = tokenizer.encode(txt)
-    inp_txt = inp_txt[:min(128, len(inp_txt))]
-    inp_txt = torch.from_numpy(np.array(inp_txt)).long().unsqueeze(0)
-    att_txt = torch.ones(inp_txt.shape).long()
+#    inp_txt = tokenizer.encode(txt)
+#    inp_txt = inp_txt[:min(128, len(inp_txt))]
+#    inp_txt = torch.from_numpy(np.array(inp_txt)).long().unsqueeze(0)
+#    att_txt = torch.ones(inp_txt.shape).long()
 
-    if if_cuda:
+#    if if_cuda:
         # inp_SM = inp_SM.cuda()
         # att_SM = att_SM.cuda()
-        inp_txt = inp_txt.cuda()
-        att_txt = att_txt.cuda()
+#        inp_txt = inp_txt.cuda()
+#        att_txt = att_txt.cuda()
 
     # with torch.no_grad():
     #     logits_des = model(inp_txt, att_txt, if_cuda)
@@ -61,10 +79,9 @@ while True:
     #     print(logits_des)
     #     print('\n')
 
-    with torch.no_grad():
-        pooled_output = model.get_emb(inp_txt, torch.zeros(inp_txt.shape).long().cuda() if if_cuda else torch.zeros(inp_txt.shape).long(), att_txt)
-        print(pooled_output)
-        print('\n')
-        print(pooled_output.shape)
-        
+#    with torch.no_grad():
+#        pooled_output = model.get_emb(inp_txt, torch.zeros(inp_txt.shape).long().cuda() if if_cuda else torch.zeros(inp_txt.shape).long(), att_txt)
+#        print(pooled_output)
+#        print('\n')
+#        print(pooled_output.shape)
 
