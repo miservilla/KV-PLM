@@ -57,24 +57,24 @@ if if_cuda:
 
 print("Finished loading ckpt_kv")
 model.eval()
-#while True:
+while True:
     # SM = input("SMILES string: ")
-#    txt = input("description: ")
+   txt = input("description: ")
     # inp_SM = tokenizer.encode(SM)#[i+30700 for i in tokenizer.encode(SM)]
     # inp_SM = inp_SM[:min(128, len(inp_SM))]
     # inp_SM = torch.from_numpy(np.array(inp_SM)).long().unsqueeze(0)
     # att_SM = torch.ones(inp_SM.shape).long()
 
-#    inp_txt = tokenizer.encode(txt)
-#    inp_txt = inp_txt[:min(128, len(inp_txt))]
-#    inp_txt = torch.from_numpy(np.array(inp_txt)).long().unsqueeze(0)
-#    att_txt = torch.ones(inp_txt.shape).long()
+   inp_txt = tokenizer.encode(txt)
+   inp_txt = inp_txt[:min(128, len(inp_txt))]
+   inp_txt = torch.from_numpy(np.array(inp_txt)).long().unsqueeze(0)
+   att_txt = torch.ones(inp_txt.shape).long()
 
-#    if if_cuda:
+   if if_cuda:
         # inp_SM = inp_SM.cuda()
         # att_SM = att_SM.cuda()
-#        inp_txt = inp_txt.cuda()
-#        att_txt = att_txt.cuda()
+       inp_txt = inp_txt.cuda()
+       att_txt = att_txt.cuda()
 
     # with torch.no_grad():
     #     logits_des = model(inp_txt, att_txt, if_cuda)
@@ -84,8 +84,8 @@ model.eval()
     #     print(logits_des)
     #     print('\n')
 
-#    with torch.no_grad():
-#        pooled_output = model.get_emb(inp_txt, torch.zeros(inp_txt.shape).long().cuda() if if_cuda else torch.zeros(inp_txt.shape).long(), att_txt)
-#        print(pooled_output)
-#        print('\n')
-#        print(pooled_output.shape)
+   with torch.no_grad():
+       pooled_output = model.get_emb(inp_txt, torch.zeros(inp_txt.shape).long().cuda() if if_cuda else torch.zeros(inp_txt.shape).long(), att_txt)
+       print(pooled_output)
+       print('\n')
+       print(pooled_output.shape)
