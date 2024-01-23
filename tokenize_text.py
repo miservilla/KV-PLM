@@ -4,7 +4,7 @@ from tokenization import BertTokenizer  # Adjust this import based on the actual
 text_file_path = 'data/test.txt'
 
 # Initialize the tokenizer
-tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')  # Adjust the model as needed
+tokenizer = BertTokenizer.from_pretrained('scibert-large-uncased')  # Adjust the model as needed
 
 # Read and tokenize the text file
 tokenized_data = []
