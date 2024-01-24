@@ -9,8 +9,8 @@ text_file_path = 'data/test.txt'
 
 # Initialize the tokenizer
 # tokenizer = BertTokenizer.from_pretrained('scibert-large-uncased')  # Adjust the model as needed
-tokenizer = SmilesTokenizer(vocab_file='vocab/vocab_all.txt')
-# tokenizer = BertTokenizer.from_pretrained('allenai/scibert_scivocab_uncased')
+# tokenizer = SmilesTokenizer(vocab_file='vocab/vocab_all.txt')
+tokenizer = BertTokenizer.from_pretrained('allenai/scibert_scivocab_uncased')
 
 # Read and tokenize the text file
 tokenized_data = []

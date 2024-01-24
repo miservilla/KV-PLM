@@ -37,11 +37,13 @@ while True:
     inp_SM = inp_SM[:min(128, len(inp_SM))]
     inp_SM = torch.from_numpy(np.array(inp_SM)).long().unsqueeze(0)
     att_SM = torch.ones(inp_SM.shape).long()
+    print(inp_SM)
 
     inp_txt = tokenizer.encode(txt)
     inp_txt = inp_txt[:min(128, len(inp_txt))]
     inp_txt = torch.from_numpy(np.array(inp_txt)).long().unsqueeze(0)
     att_txt = torch.ones(inp_txt.shape).long()
+    print(inp_txt)
 
     if if_cuda:
         inp_SM = inp_SM.cuda()
