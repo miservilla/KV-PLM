@@ -1,10 +1,10 @@
-# dataset='chemprot'
-# task='HIV'
-# model='KV-PLM*'
-
-dataset='bc5cdr'
+dataset='chemprot'
 task='HIV'
 model='KV-PLM*'
+
+# dataset='bc5cdr'
+# task='HIV'
+# model='KV-PLM*'
 
 sci='Sci-BERT'
 kv='KV-PLM'
