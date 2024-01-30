@@ -29,15 +29,18 @@ class BigModel(nn.Module):
 
 #bert_model0 = BertForPreTraining.from_pretrained('allenai/scibert_scivocab_uncased')
 bert_model = BertForSequenceClassification.from_pretrained('allenai/scibert_scivocab_uncased')
-bert_model.classifier = nn.Linear(768,13)
+# bert_model.classifier = nn.Linear(768,13)
 
-pt = torch.load('save_model/ckpt_KV_1.pt')
+pt = torch.load('save_model/ckpt_ret01.pt')
 if 'module.ptmodel.bert.embeddings.word_embeddings.weight' in pt:
     pretrained_dict = {k[20:]: v for k, v in pt.items()}
+    print('module')
 elif 'bert.embeddings.word_embeddings.weight' in pt:
     pretrained_dict = {k[5:]: v for k, v in pt.items()}
+    print('bert')
 else:
     pretrained_dict = {k[12:]: v for k, v in pt.items()}
+    print('none')
 
 bert_model.bert.load_state_dict(pretrained_dict, strict=False)
 
@@ -59,6 +62,7 @@ while True:
     inp_SM = inp_SM[:min(128, len(inp_SM))]
     inp_SM = torch.from_numpy(np.array(inp_SM)).long().unsqueeze(0)
     att_SM = torch.ones(inp_SM.shape).long()
+    print(inp_SM)
 
 #    inp_txt = tokenizer.encode(txt)
 #    inp_txt = inp_txt[:min(128, len(inp_txt))]
@@ -71,10 +75,7 @@ while True:
 #        inp_txt = inp_txt.cuda()
 #        att_txt = att_txt.cuda()
 
-    with torch.no_grad():
-        embeddings = model(inp_SM,att_SM)
-        print(embeddings)
-        print('\n')
+    # with torch.no_grad():
     #     logits_des = model(inp_txt, att_txt, if_cuda)
     #     # logits_smi = model(inp_SM, att_SM, if_cuda)
     #     # score = torch.cosine_similarity(logits_des, logits_smi, dim=-1)
@@ -82,7 +83,10 @@ while True:
     #     print(logits_des)
     #     print('\n')
 
-#    with torch.no_grad():
+    with torch.no_grad():
+        embeddings = model(inp_SM,att_SM)
+        print(embeddings)
+        print('\n')
 #        pooled_output = model.get_emb(inp_txt, torch.zeros(inp_txt.shape).long().cuda() if if_cuda else torch.zeros(inp_txt.shape).long(), att_txt)
 #        print(pooled_output)
 #        print('\n')

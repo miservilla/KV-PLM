@@ -6,8 +6,8 @@ import numpy as np
 from transformers import BertForSequenceClassification, BertConfig
 from smtokenization import SmilesTokenizer
 
-tokenizer = SmilesTokenizer(vocab_file='vocab/vocab_all.txt')
-# tokenizer = BertTokenizer.from_pretrained('allenai/scibert_scivocab_uncased')
+# tokenizer = SmilesTokenizer(vocab_file='vocab/vocab_all.txt')
+tokenizer = BertTokenizer.from_pretrained('allenai/scibert_scivocab_uncased')
 
 class KvplmModel(nn.Module):
     def __init__(self, main_model,pool_type):
@@ -42,19 +42,19 @@ class KvplmModel(nn.Module):
 bert_model = BertForPreTraining.from_pretrained('allenai/scibert_scivocab_uncased')
 #bert_model.classifier = nn.Linear(768,13)
 
-pt = torch.load('save_model/ckpt_KV.pt',map_location=torch.device('cpu'))
+pt = torch.load('save_model/ckpt_ret01.pt',map_location=torch.device('cuda'))
 if 'module.ptmodel.bert.embeddings.word_embeddings.weight' in pt:
     pretrained_dict = {k[20:]: v for k, v in pt.items()}
-    #print('module')
-    #print(pretrained_dict)
+    print('module')
+    # print(pretrained_dict)
 elif 'bert.embeddings.word_embeddings.weight' in pt:
     pretrained_dict = {k[5:]: v for k, v in pt.items()}
-    #print('bert')
-    #print(pretrained_dict)
+    print('bert')
+    # print(pretrained_dict)
 else:
     pretrained_dict = {k[12:]: v for k, v in pt.items()}
-    #print('none')
-    #print(pretrained_dict)
+    print('none')
+    # print(pretrained_dict)
 
 bert_model.bert.load_state_dict(pretrained_dict, strict=False)
 
