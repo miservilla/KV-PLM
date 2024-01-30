@@ -7,6 +7,7 @@ import sys
 tokenizer0 = BertTokenizer.from_pretrained('allenai/scibert_scivocab_uncased')
 
 f = open('align_des_filt3.txt')
+# f = open('test.txt')
 corpus = f.readlines()
 f.close()
 
@@ -30,7 +31,7 @@ cnt = 0
 if fn=='train':
     a=0
     b=10500
-elif fn=='dev':
+# elif fn=='dev':
     a=10500
     b=12000
 else:
@@ -82,7 +83,7 @@ for ind in range(a, b):
     allattdes.append(attdes.astype('int64'))
     '''
 rec_cor.append(cnt)
-#print(cnt)
+print(cnt)
 np.save('sent/'+fn+'_cor.npy', rec_cor)
 np.save('sent/'+fn+'_tokdes.npy', alltokdes)
 np.save('sent/'+fn+'_attdes.npy', allattdes)

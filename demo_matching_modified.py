@@ -15,23 +15,53 @@ class BigModel(nn.Module):
         self.main_model = main_model
         self.dropout = nn.Dropout(0.1)
 
+    # def forward(self, tok, att, cud=True):
+    #     typ = torch.zeros(tok.shape).long()
+    #     if cud:
+    #         typ = typ.cuda()
+    #     pooled_output = self.main_model(tok, token_type_ids=typ, attention_mask=att)['pooler_output']
+    #     logits = self.dropout(pooled_output)
+    #     return logits
+    
     def forward(self, tok, att, cud=True):
         typ = torch.zeros(tok.shape).long()
         if cud:
             typ = typ.cuda()
-        pooled_output = self.main_model(tok, token_type_ids=typ, attention_mask=att)['pooler_output']
+
+        # Requesting all outputs including hidden states
+        outputs = self.main_model(tok, token_type_ids=typ, attention_mask=att, output_hidden_states=True)
+        
+        # Extracting the last hidden state
+        try:
+            last_hidden_states = outputs.hidden_states[-1]  # The last layer's hidden states
+        except AttributeError:
+            # Fallback if hidden states are not available
+            raise ValueError("Hidden states not available in the model output.")
+
+        # Take the hidden state of the first token for each sequence
+        pooled_output = last_hidden_states[:, 0]
         logits = self.dropout(pooled_output)
         return logits
-    
+
+
+
+    # def get_emb(self, tokens, token_type_ids, attention_mask):
+    #     pooled_output = self.main_model(tokens, token_type_ids, attention_mask)['pooler_output']
+    #     return pooled_output
+
     def get_emb(self, tokens, token_type_ids, attention_mask):
-        pooled_output = self.main_model(tokens, token_type_ids, attention_mask)['pooler_output']
+        outputs = self.main_model(tokens, token_type_ids=token_type_ids, attention_mask=attention_mask)
+        last_hidden_states = outputs['last_hidden_state']
+        # Take the hidden state of the first token for each sequence
+        pooled_output = last_hidden_states[:, 0]
         return pooled_output
+
 
 #bert_model0 = BertForPreTraining.from_pretrained('allenai/scibert_scivocab_uncased')
 bert_model = BertForSequenceClassification.from_pretrained('allenai/scibert_scivocab_uncased')
 bert_model.classifier = nn.Linear(768,13)
 
-pt = torch.load('save_model/ckpt_KV_1.pt')
+pt = torch.load('save_model/ckpt_ret01.pt')
 if 'module.ptmodel.bert.embeddings.word_embeddings.weight' in pt:
     pretrained_dict = {k[20:]: v for k, v in pt.items()}
 elif 'bert.embeddings.word_embeddings.weight' in pt:
@@ -43,7 +73,7 @@ bert_model.bert.load_state_dict(pretrained_dict, strict=False)
 
 model = BigModel(bert_model)
 
-if_cuda = False
+if_cuda = True
 if if_cuda:
     # model.load_state_dict(torch.load('save_model/ckpt_KV.pt'))
     # model = model.cuda()
@@ -59,6 +89,7 @@ while True:
     inp_SM = inp_SM[:min(128, len(inp_SM))]
     inp_SM = torch.from_numpy(np.array(inp_SM)).long().unsqueeze(0)
     att_SM = torch.ones(inp_SM.shape).long()
+    print(inp_SM)
 
 #    inp_txt = tokenizer.encode(txt)
 #    inp_txt = inp_txt[:min(128, len(inp_txt))]

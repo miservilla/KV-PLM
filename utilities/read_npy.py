@@ -1,6 +1,6 @@
 import numpy as np
 
-data = np.load('USPTO/fewlab_test.npy')
+data = np.load('../Ret/sent/dev_tokdes.npy')
 print(data.shape)
 print(data.dtype)
 print(data)
