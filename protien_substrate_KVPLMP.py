@@ -1,3 +1,16 @@
+'''
+I fixed the bugs and it is working .(This is only with retrieval checkpoint)
+If you just want the embeddings without fine tuning then you can directly use 
+get_chosen_emb function from BigModel class.
+
+If you wanna fine tune you have to replace forward function with get_class_emb 
+function (change name of get_class_emb to forward and delete the original 
+forward.)
+
+I dont think you need to use get_emb function. I am trying to follow what has 
+been used for pooling in GeneLLM project
+'''
+
 from transformers import BertTokenizer, BertForPreTraining
 import sys
 import torch
