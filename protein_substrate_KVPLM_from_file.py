@@ -95,7 +95,7 @@ with open(tokens_file_path, 'w') as tokens_file:
         tokens = tokenizer.convert_ids_to_tokens(input_ids[0])
 
         # Uncomment below to save as token.txt file
-        # tokens_file.write(f"Row {index}: {' '.join(tokens)}\n")
+        tokens_file.write(f"Row {index}: {' '.join(tokens)}\n")
         inp_SM = tokenizer.encode(SM, add_special_tokens=True)
         
         inp_SM = inp_SM[:min(128, len(inp_SM))]
