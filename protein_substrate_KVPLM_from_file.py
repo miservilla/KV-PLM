@@ -82,7 +82,7 @@ df = pd.read_csv('ChEBI_id_name_SMILES_def_cleaned.csv')
 
 # Initialize a list to hold embeddings
 all_embeddings = []
-tokens_file_path = 'def_generated_tokens.txt'
+tokens_file_path = 'substrate_tokens_20240213.txt'
 
 with open(tokens_file_path, 'w') as tokens_file:
     for index, row in df.iterrows():
@@ -117,4 +117,24 @@ with open(tokens_file_path, 'w') as tokens_file:
 embeddings_tensor = torch.stack(all_embeddings)
 
 # Save embeddings
-torch.save(embeddings_tensor, 'def_embeddings_20240212.pt')  # Saves the tensor to a file
+torch.save(embeddings_tensor, 'substrate_embeddings_20240213.pt')  # Saves the tensor to a file
+
+# Assuming 'Identifier' is the name of your column in `df` that you want to use as the identifier
+identifiers = df['ChEBI ID'].values
+
+# Convert all_embeddings to a list of numpy arrays (for human readability)
+all_embeddings_np = [emb.cpu().numpy() for emb in all_embeddings]  # Make sure to move the tensor to CPU
+
+# Flatten the embeddings if they are not already 1D
+all_embeddings_flattened = [emb.flatten() for emb in all_embeddings_np]
+
+# Create a DataFrame from the flattened embeddings
+embeddings_df = pd.DataFrame(all_embeddings_flattened)
+
+# Add the identifiers as the first column
+embeddings_df.insert(0, 'Identifier', identifiers)
+
+# Save the DataFrame to a CSV file
+embeddings_df.to_csv('substrate_embeddings_20240213.csv', index=False)
+
+
