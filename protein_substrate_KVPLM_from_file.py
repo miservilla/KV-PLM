@@ -117,4 +117,4 @@ with open(tokens_file_path, 'w') as tokens_file:
 embeddings_tensor = torch.stack(all_embeddings)
 
 # Save embeddings
-torch.save(embeddings_tensor, 'def_embeddings.txt')  # Saves the tensor to a file
+torch.save(embeddings_tensor, 'def_embeddings_20240212.pt')  # Saves the tensor to a file
