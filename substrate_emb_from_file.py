@@ -78,12 +78,12 @@ else:
     model.load_state_dict(torch.load('save_model/ckpt_ret01.pt', map_location=torch.device('cpu') ))
 model.eval()
 
-df = pd.read_csv('/data_link/servilla/KV-PLM/compound_smiles_no_dups_Nan.csv')
+df = pd.read_csv('/data_link/servilla/SPOT2/data/Uniprot/chebi_smiles.csv')
 
 # initial list to hold embeddings
 all_embeddings = []
-for cid in df['CID']:
-    SM = df[df['CID'] == cid]['SMILES'].values[0]
+for cid in df['ChEBI ID']:
+    SM = df[df['ChEBI ID'] == cid]['SMILES'].values[0]
     inp_SM = tokenizer.encode(SM)#[i+30700 for i in tokenizer.encode(SM)]
     inp_SM = inp_SM[:min(128, len(inp_SM))]
     inp_SM = torch.from_numpy(np.array(inp_SM)).long().unsqueeze(0)
@@ -97,7 +97,7 @@ for cid in df['CID']:
         embeddings = model.get_chosen_emb(inp_SM, att_SM)
         all_embeddings.append(embeddings)
 
-identifiers = df['CID'].values
+identifiers = df['ChEBI ID'].values
 
 # Convert all_embeddings to a list of numpy arrays (for human readability)
 all_embeddings_np = [emb.cpu().numpy() for emb in all_embeddings]  # Make sure to move the tensor to CPU
@@ -112,7 +112,7 @@ embeddings_df = pd.DataFrame(all_embeddings_flattened)
 embeddings_df.insert(0, 'Identifier', identifiers)
 
 # Save the DataFrame to a CSV file
-embeddings_df.to_csv('compound_smiles_emb_no_text.csv', index=False)
+embeddings_df.to_csv('/data_link/servilla/SPOT2/data/SMILES_emb_no_text.csv', index=False)
 
 # while True:
 #     SM = input("SMILES string: ")
